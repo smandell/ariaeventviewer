@@ -1,13 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var parseString = require('xml2js').parseString;
 
 router.post('/', function(req, res, next) {
-  var xml = req.body;
-  parseString(xml, function(err, result){
-    console.log(result);
-  });
-
+  console.log(req.body);
   res.send("SUCCESS");
 });
 
