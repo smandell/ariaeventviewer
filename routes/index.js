@@ -3,7 +3,7 @@ var router = express.Router();
 const util = require('util');
 
 router.post('/', function(req, res, next) {
-
+  console.log(req.get('Content-Type'));
   console.log(util.inspect(req.body, false, null));
   res.send("SUCCESS");
 });
