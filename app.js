@@ -22,11 +22,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var port = 80;
-app.listen(port, function(){
-  console.log ("our app is listening on port 80");
-});
-
 app.use('/', routes);
 app.use('/users', users);
 
