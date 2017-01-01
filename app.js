@@ -27,10 +27,7 @@ function anyBodyParser(req, res, next) {
     });
 }
 
-app.configure(function() {
-  app.use(anyBodyParser);
-});
-
+app.use(anyBodyParser);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
