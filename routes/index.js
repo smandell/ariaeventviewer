@@ -4,7 +4,9 @@ const util = require('util');
 
 router.post('/', function(req, res, next) {
   console.log(req.get('Content-Type'));
-  console.log(util.inspect(req.body, false, null));
+  console.log(req.rawBody);
+  console.log("the inspected raw body:");
+  console.log(util.inspect(req.rawBody, false, null));
   res.send("SUCCESS");
 });
 
