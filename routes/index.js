@@ -1,9 +1,28 @@
 var express = require('express');
 var router = express.Router();
 const util = require('util');
-var xmlparser = require('express-xml-bodyparser');
+var xml4js = require('xml4js');
 
-router.post('/', xmlparser({trim: false, explicitArray: false}), function(req, res, next) {
+router.post('/', function(req, res, next) {
+
+  var options = {};
+  var parser = new xml4js.Parser(options);
+
+/* 
+  // Default is to not download schemas automatically, so we should add it manually 
+  var schema = fs.readFileSync('schema.xsd', {encoding: 'utf-8'});
+  parser.addSchema('http://www.w3.org/2001/XMLSchema', schema, function (err, importsAndIncludes) {
+    // importsAndIncludes contains schemas to be added as well to satisfy all imports and includes found in schema.xsd 
+    parser.parseString(xml, function (err, result) {
+        console.log(util.inspect(result, false, null));
+    });
+});
+*/
+  console.log("headers!");
+  console.log(req.headers);
+  console.log('cookies!');
+  console.log(req.cookies);
+  console.log(req.signedCookies);
   console.log(req.get('Content-Type'));
   console.log("jsonified xml");
   console.log(util.inspect(req.body, false, null));
