@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File $Id$ -->
+<!-- Revision $Revision$ -->
+<!-- Author $Author$ -->
+<!-- Date $Date$ -->
+<!-- Account-based event notification -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="apf2doc">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="request"/>
+                                <xs:element ref="acct_data"/>
+                                <xs:element ref="acct_contact" minOccurs="0"/>
+                                <xs:element ref="notify_tmplt_group_data" minOccurs="0"/>
+                                <xs:element ref="billing_group_data" minOccurs="0"/>
+                                <xs:element ref="master_plan_instance_data" minOccurs="0"/>
+                                <xs:element ref="dunning_group_data" minOccurs="0"/>
+                                <xs:element ref="payment_method_data" minOccurs="0"/>
+                                <xs:element ref="contract_data" minOccurs="0"/>
+                                <xs:element ref="acct_supp_field_data" minOccurs="0"/>
+                                <xs:element ref="event_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="request">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="version"/>
+                                <xs:element ref="sender"/>
+                                <xs:element ref="transaction_id"/>
+                                <xs:element ref="action"/>
+                                <xs:element ref="class_name"/>
+                                <xs:element ref="auth_key" minOccurs="0"/>
+                                <xs:element ref="client_receipt_id" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Aria-assigned version number of this event notification request's document format.  Value in this version of the XML document is fixed at "3.0". Note that as of version 3.0, the data typed changed from "int" to "decimal". -->
+        <xs:element name="version" type="xs:decimal" fixed="1.0"/>
+        <!-- Identifies the sender of the event notification request.  Valid values are "A"=Aria or "C"=Client.  Currently only outbound requests from Aria-to-clients are supported, so the value of this field is effectively currently fixed as "A". -->
+        <xs:element name="sender" nillable="false">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:enumeration value="A"/>
+                                <xs:enumeration value="C"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+        <!-- Aria-assigned event notification request ID. -->
+        <xs:element name="transaction_id" type="xs:int"/>
+        <!--Identifies which action caused the event notification request. "A"=add,"M"=modify-->
+        <xs:element name="action" nillable="false">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:enumeration value="A"/>
+                                <xs:enumeration value="M"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+        <!--Identifies the type of data being sent. "A"=account and master plan instance, "O"=order, "F"=financial transaction, "N"=account notification-->
+        <xs:element name="class_name">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:enumeration value="A"/>
+                                <xs:enumeration value="O"/>
+                                <xs:enumeration value="F"/>
+                                <xs:enumeration value="N"/>
+                                <xs:enumeration value="T"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+        <!-- Client-specific authentication key -->
+        <xs:element name="auth_key" type="xs:string"/>
+        <xs:element name="client_receipt_id" type="xs:string"/>
+        <xs:element name="acct_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="client_no"/>
+                                <xs:element ref="acct_no"/>
+                                <xs:element ref="client_acct_id" minOccurs="0"/>
+                                <xs:element ref="userid" minOccurs="0"/>
+                                <xs:element ref="password" minOccurs="0"/>
+                                <xs:element ref="pin" minOccurs="0"/>
+                                <xs:element ref="secret_question" minOccurs="0"/>
+                                <xs:element ref="secret_answer" minOccurs="0"/>
+                                <xs:element ref="status_cd" minOccurs="0"/>
+                                <xs:element ref="senior_acct_no" minOccurs="0"/>
+                                <xs:element ref="notify_method" minOccurs="0"/>
+                                <xs:element ref="currency" minOccurs="0"/>
+                                <xs:element ref="test_acct" minOccurs="0"/>
+                                <xs:element ref="last_acct_comment" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Aria-assigned client identifier -->
+        <xs:element name="client_no" type="xs:int"/>
+        <!-- Aria-assigned account identifier -->
+        <xs:element name="acct_no" type="xs:int"/>
+        <xs:element name="client_acct_id" type="xs:string"/>
+        <xs:element name="userid" type="xs:string"/>
+        <xs:element name="password" type="xs:string"/>
+        <xs:element name="pin" type="xs:string"/>
+        <xs:element name="secret_question" type="xs:string"/>
+        <xs:element name="secret_answer" type="xs:string"/>
+        <xs:element name="status_cd" type="xs:int"/>
+        <xs:element name="senior_acct_no" type="xs:int"/>
+        <xs:element name="notify_method" type="xs:int"/>
+        <xs:element name="currency" type="xs:string"/>
+        <!--Identifies whether or not this is a test account. "Y"=yes/true, "N"=no/false-->
+        <xs:element name="test_acct" type="xs:string"/>
+        <!-- Last comment recorded on the account, includes both user generated and system generated comments -->
+        <xs:element name="last_acct_comment" type="xs:string"/>
+        <!-- Contact information for the account -->
+        <xs:element name="acct_contact">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="first_name" minOccurs="0"/>
+                                <xs:element ref="middle_initial" minOccurs="0"/>
+                                <xs:element ref="last_name" minOccurs="0"/>
+                                <xs:element ref="company_name" minOccurs="0"/>
+                                <xs:element ref="address1" minOccurs="0"/>
+                                <xs:element ref="address2" minOccurs="0"/>
+                                <xs:element ref="address3" minOccurs="0"/>
+                                <xs:element ref="city" minOccurs="0"/>
+                                <xs:element ref="state_prov" minOccurs="0"/>
+                                <xs:element ref="locality" minOccurs="0"/>
+                                <xs:element ref="postal_code" minOccurs="0"/>
+                                <xs:element ref="country" minOccurs="0"/>
+                                <xs:element ref="phone" minOccurs="0"/>
+                                <xs:element ref="phone_ext" minOccurs="0"/>
+                                <xs:element ref="work_phone" minOccurs="0"/>
+                                <xs:element ref="work_phone_ext" minOccurs="0"/>
+                                <xs:element ref="cell_phone" minOccurs="0"/>
+                                <xs:element ref="email" minOccurs="0"/>
+                                <xs:element ref="fax" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="first_name" type="xs:string"/>
+        <xs:element name="middle_initial" type="xs:string"/>
+        <xs:element name="last_name" type="xs:string"/>
+        <xs:element name="company_name" type="xs:string"/>
+        <xs:element name="address1" type="xs:string"/>
+        <xs:element name="address2" type="xs:string"/>
+        <xs:element name="address3" type="xs:string"/>
+        <xs:element name="city" type="xs:string"/>
+        <xs:element name="state_prov" type="xs:string"/>
+        <xs:element name="locality" type="xs:string"/>
+        <xs:element name="postal_code" type="xs:string"/>
+        <xs:element name="country" type="xs:string"/>
+        <xs:element name="phone" type="xs:string"/>
+        <xs:element name="phone_ext" type="xs:string"/>
+        <xs:element name="work_phone" type="xs:string"/>
+        <xs:element name="work_phone_ext" type="xs:string"/>
+        <xs:element name="cell_phone" type="xs:string"/>
+        <xs:element name="email" type="xs:string"/>
+        <xs:element name="fax" type="xs:string"/>
+        <!-- Notification Template Groups -->
+        <xs:element name="notify_tmplt_group_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="notify_tmplt_group" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="notify_tmplt_group">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="notify_tmplt_group_id"/>
+                                <xs:element ref="notify_tmplt_group_label" minOccurs="0"/>
+                                <xs:element ref="notify_tmplt_group_assign_lvl" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="notify_tmplt_group_id" type="xs:string"/>
+        <xs:element name="notify_tmplt_group_label" type="xs:string"/>
+        <xs:element name="notify_tmplt_group_assign_lvl" type="xs:string"/>
+        <!-- Billing Groups -->
+        <xs:element name="billing_group_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="billing_group" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="billing_group">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="billing_group_no"/>
+                                <xs:element ref="client_billing_group_id" minOccurs="0"/>
+                                <xs:element ref="billing_group_name" minOccurs="0"/>
+                                <xs:element ref="primary_payment_method_no" minOccurs="0"/>
+                                <xs:element ref="client_primary_pymt_method_id" minOccurs="0"/>
+                                <xs:element ref="bkup_payment_method_no" minOccurs="0"/>
+                                <xs:element ref="client_bkup_pymt_method_id" minOccurs="0"/>
+                                <xs:element ref="notify_tmplt_group_id" minOccurs="0"/>
+                                <xs:element ref="notify_tmplt_group_label" minOccurs="0"/>
+								<xs:element ref="payment_terms_no" minOccurs="0"/>
+								<xs:element ref="client_payment_term_id" minOccurs="0"/>
+								<xs:element ref="payment_terms_name" minOccurs="0"/>
+								<xs:element ref="payment_terms_desc" minOccurs="0"/>
+								<xs:element ref="ean_gln_number" minOccurs="0"/>
+								<xs:element ref="ean_gln_requisition_number" minOccurs="0"/>
+                                <xs:element ref="statement_contact" minOccurs="0"/>
+                                <xs:element ref="mapped_mpi_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="billing_group_no" type="xs:int"/>
+        <xs:element name="client_billing_group_id" type="xs:string"/>
+        <xs:element name="billing_group_name" type="xs:string"/>
+        <xs:element name="primary_payment_method_no" type="xs:int"/>
+        <xs:element name="client_primary_pymt_method_id" type="xs:string"/>
+        <xs:element name="bkup_payment_method_no" type="xs:int"/>
+        <xs:element name="client_bkup_pymt_method_id" type="xs:string"/>
+		<xs:element name="payment_terms_no" type="xs:string"/>
+		<xs:element name="client_payment_term_id" type="xs:string"/>
+		<xs:element name="payment_terms_name" type="xs:string"/>
+		<xs:element name="payment_terms_desc" type="xs:string"/>
+		<xs:element name="ean_gln_number" type="xs:string"/>
+		<xs:element name="ean_gln_requisition_number" type="xs:string"/>
+        <xs:element name="statement_contact">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="first_name" minOccurs="0"/>
+                                <xs:element ref="middle_initial" minOccurs="0"/>
+                                <xs:element ref="last_name" minOccurs="0"/>
+                                <xs:element ref="company_name" minOccurs="0"/>
+                                <xs:element ref="address1" minOccurs="0"/>
+                                <xs:element ref="address2" minOccurs="0"/>
+                                <xs:element ref="address3" minOccurs="0"/>
+                                <xs:element ref="city" minOccurs="0"/>
+                                <xs:element ref="state_prov" minOccurs="0"/>
+                                <xs:element ref="locality" minOccurs="0"/>
+                                <xs:element ref="postal_code" minOccurs="0"/>
+                                <xs:element ref="country" minOccurs="0"/>
+                                <xs:element ref="phone" minOccurs="0"/>
+                                <xs:element ref="phone_ext" minOccurs="0"/>
+                                <xs:element ref="work_phone" minOccurs="0"/>
+                                <xs:element ref="work_phone_ext" minOccurs="0"/>
+                                <xs:element ref="cell_phone" minOccurs="0"/>
+                                <xs:element ref="email" minOccurs="0"/>
+                                <xs:element ref="fax" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="mapped_mpi_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="mapped_mpi" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="mapped_mpi">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="master_plan_instance_no" minOccurs="0"/>
+                                <xs:element ref="client_master_plan_instance_id" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Master Plan Instances -->
+        <xs:element name="master_plan_instance_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="master_plan_instance" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="master_plan_instance">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="master_plan_instance_no"/>
+                                <xs:element ref="client_master_plan_instance_id" minOccurs="0"/>
+                                <xs:element ref="plan_no" minOccurs="0"/>
+                                <xs:element ref="client_plan_id" minOccurs="0"/>
+                                <xs:element ref="plan_name" minOccurs="0"/>
+                                <xs:element ref="plan_activation_date" minOccurs="0"/>
+                                <xs:element ref="plan_termination_date" minOccurs="0"/>
+                                <xs:element ref="status_cd" minOccurs="0"/>
+                                <xs:element ref="queued_status_cd" minOccurs="0"/>
+                                <xs:element ref="resp_level_cd" minOccurs="0"/>
+                                <xs:element ref="resp_plan_instance_no" minOccurs="0"/>
+                                <xs:element ref="plan_units" minOccurs="0"/>
+                                <xs:element ref="queued_units" minOccurs="0"/>
+                                <xs:element ref="units_change_date" minOccurs="0"/>
+                                <xs:element ref="prov_reason_cd" minOccurs="0"/>
+                                <xs:element ref="promo_cd" minOccurs="0"/>
+                                <xs:element ref="transistion_from_plan" minOccurs="0"/>
+                                <xs:element ref="transistion_to_plan" minOccurs="0"/>
+                                <xs:element ref="mpi_billing_dates" minOccurs="0"/>
+                                <xs:element ref="mpi_supp_fields_data" minOccurs="0"/>
+                                <xs:element ref="supp_plan_instance_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="master_plan_instance_no" type="xs:int"/>
+        <xs:element name="client_master_plan_instance_id" type="xs:string"/>
+        <xs:element name="plan_no" type="xs:int"/>
+        <xs:element name="client_plan_id" type="xs:string"/>
+        <xs:element name="plan_name" type="xs:string"/>
+        <xs:element name="plan_activation_date" type="xs:string"/>
+        <xs:element name="plan_termination_date" type="xs:string"/>
+        <xs:element name="queued_status_cd" type="xs:int"/>
+        <xs:element name="resp_level_cd" type="xs:int"/>
+        <xs:element name="resp_plan_instance_no" type="xs:int"/>
+        <xs:element name="plan_units" type="xs:double"/>
+        <xs:element name="queued_units" type="xs:double"/>
+        <xs:element name="units_change_date" type="xs:string"/>
+        <xs:element name="prov_reason_cd" type="xs:int"/>
+        <xs:element name="promo_cd" type="xs:string"/>
+        <xs:element name="transistion_from_plan" type="xs:int"/>
+        <xs:element name="transistion_to_plan" type="xs:int"/>
+        <xs:element name="mpi_billing_dates">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="bill_day" minOccurs="0"/>
+                                <xs:element ref="created_date" minOccurs="0"/>
+                                <xs:element ref="next_bill_date" minOccurs="0"/>
+                                <xs:element ref="last_bill_date" minOccurs="0"/>
+                                <xs:element ref="recurring_bill_thru_date" minOccurs="0"/>
+                                <xs:element ref="usage_bill_thru_date" minOccurs="0"/>
+                                <xs:element ref="plan_date" minOccurs="0"/>
+                                <xs:element ref="status_date" minOccurs="0"/>
+                                <xs:element ref="next_dunning_date" minOccurs="0"/>
+                                <xs:element ref="queued_status_change_date" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="bill_day" type="xs:int"/>
+        <xs:element name="created_date" type="xs:string"/>
+        <xs:element name="next_bill_date" type="xs:string"/>
+        <xs:element name="last_bill_date" type="xs:string"/>
+        <xs:element name="recurring_bill_thru_date" type="xs:string"/>
+        <xs:element name="usage_bill_thru_date" type="xs:string"/>
+        <xs:element name="plan_date" type="xs:string"/>
+        <xs:element name="status_date" type="xs:string"/>
+        <xs:element name="next_dunning_date" type="xs:string"/>
+        <xs:element name="queued_status_change_date" type="xs:string"/>
+        <xs:element name="mpi_supp_fields_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="mpi_supp_field" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="mpi_supp_field">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="field_name" minOccurs="0"/>
+                                <xs:element ref="field_value" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="field_name" type="xs:string"/>
+        <xs:element name="field_value" type="xs:string"/>
+        <xs:element name="supp_plan_instance_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="supp_plan_instance" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="supp_plan_instance">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="plan_instance_no" minOccurs="0"/>
+                                <xs:element ref="client_plan_instance_id" minOccurs="0"/>
+                                <xs:element ref="plan_no" minOccurs="0"/>
+                                <xs:element ref="client_plan_id" minOccurs="0"/>
+                                <xs:element ref="plan_name" minOccurs="0"/>
+                                <xs:element ref="plan_activation_date" minOccurs="0"/>
+                                <xs:element ref="plan_termination_date" minOccurs="0"/>
+                                <xs:element ref="status_cd" minOccurs="0"/>
+                                <xs:element ref="plan_units" minOccurs="0"/>
+                                <xs:element ref="queued_units" minOccurs="0"/>
+                                <xs:element ref="units_change_date" minOccurs="0"/>
+                                <xs:element ref="prov_reason_cd" minOccurs="0"/>
+                                <xs:element ref="transistion_from_plan" minOccurs="0"/>
+                                <xs:element ref="transistion_to_plan" minOccurs="0"/>
+                                <xs:element ref="spi_billing_dates" minOccurs="0"/>
+                                <xs:element ref="spi_supp_fields_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="plan_instance_no" type="xs:int"/>
+        <xs:element name="client_plan_instance_id" type="xs:string"/>
+        <xs:element name="spi_billing_dates">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="bill_day" minOccurs="0"/>
+                                <xs:element ref="next_bill_date" minOccurs="0"/>
+                                <xs:element ref="last_bill_date" minOccurs="0"/>
+                                <xs:element ref="recurring_bill_thru_date" minOccurs="0"/>
+                                <xs:element ref="usage_bill_thru_date" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="spi_supp_fields_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="spi_supp_field" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="spi_supp_field">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="field_name" minOccurs="0"/>
+                                <xs:element ref="field_value" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Dunning Groups -->
+        <xs:element name="dunning_group_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="dunning_group" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="dunning_group">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="dunning_group_no"/>
+                                <xs:element ref="client_dunning_group_id" minOccurs="0"/>
+                                <xs:element ref="dunning_group_name" minOccurs="0"/>
+                                <xs:element ref="mapped_mpi_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="dunning_group_no" type="xs:int"/>
+        <xs:element name="client_dunning_group_id" type="xs:string"/>
+        <xs:element name="dunning_group_name" type="xs:string"/>
+        <!-- Payment Methods -->
+        <xs:element name="payment_method_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="payment_method" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="payment_method">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="payment_method_no"/>
+                                <xs:element ref="client_payment_method_id" minOccurs="0"/>
+                                <xs:element ref="billing_contact" minOccurs="0"/>
+                                <xs:element ref="pay_method" minOccurs="0"/>
+                                <xs:element ref="cc_suffix" minOccurs="0"/>
+                                <xs:element ref="cc_exp_mm" minOccurs="0"/>
+                                <xs:element ref="cc_exp_yyyy" minOccurs="0"/>
+                                <xs:element ref="bank_acct_suffix" minOccurs="0"/>
+                                <xs:element ref="bank_routing_no" minOccurs="0"/>
+                                <xs:element ref="bill_agreement_id" minOccurs="0"/>
+                                <xs:element ref="iban_suffix" minOccurs="0"/>
+                                <xs:element ref="bban_suffix" minOccurs="0"/>
+                                <xs:element ref="bank_id_cd" minOccurs="0"/>
+                                <xs:element ref="bank_country_cd" minOccurs="0"/>
+                                <xs:element ref="mandate_id" minOccurs="0"/>
+                                <xs:element ref="bank_swift_cd" minOccurs="0"/>
+                                <xs:element ref="bank_branch_cd" minOccurs="0"/>
+                                <xs:element ref="mapped_billing_group_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="payment_method_no" type="xs:int"/>
+        <xs:element name="client_payment_method_id" type="xs:string"/>
+        <xs:element name="pay_method" type="xs:int"/>
+        <xs:element name="cc_suffix" type="xs:string"/>
+        <xs:element name="cc_exp_mm" type="xs:int"/>
+        <xs:element name="cc_exp_yyyy" type="xs:int"/>
+        <xs:element name="bank_acct_suffix" type="xs:string"/>
+        <xs:element name="bank_routing_no" type="xs:string"/>
+        <xs:element name="bill_agreement_id" type="xs:string"/>
+        <xs:element name="iban_suffix" type="xs:string"/>
+        <xs:element name="bban_suffix" type="xs:string"/>
+        <xs:element name="bank_id_cd" type="xs:string"/>
+        <xs:element name="bank_country_cd" type="xs:string"/>
+        <xs:element name="mandate_id" type="xs:string"/>
+        <xs:element name="bank_swift_cd" type="xs:string"/>
+        <xs:element name="bank_branch_cd" type="xs:string"/>
+        <xs:element name="billing_contact">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="first_name" minOccurs="0"/>
+                                <xs:element ref="middle_initial" minOccurs="0"/>
+                                <xs:element ref="last_name" minOccurs="0"/>
+                                <xs:element ref="company_name" minOccurs="0"/>
+                                <xs:element ref="address1" minOccurs="0"/>
+                                <xs:element ref="address2" minOccurs="0"/>
+                                <xs:element ref="address3" minOccurs="0"/>
+                                <xs:element ref="city" minOccurs="0"/>
+                                <xs:element ref="state_prov" minOccurs="0"/>
+                                <xs:element ref="locality" minOccurs="0"/>
+                                <xs:element ref="postal_code" minOccurs="0"/>
+                                <xs:element ref="country" minOccurs="0"/>
+                                <xs:element ref="phone" minOccurs="0"/>
+                                <xs:element ref="phone_ext" minOccurs="0"/>
+                                <xs:element ref="work_phone" minOccurs="0"/>
+                                <xs:element ref="work_phone_ext" minOccurs="0"/>
+                                <xs:element ref="cell_phone" minOccurs="0"/>
+                                <xs:element ref="email" minOccurs="0"/>
+                                <xs:element ref="fax" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="mapped_billing_group_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="mapped_billing_group" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="mapped_billing_group">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="billing_group_no" minOccurs="0"/>
+                                <xs:element ref="client_billing_group_id" minOccurs="0"/>
+                                <xs:element ref="mapped_mpi_data" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Account Contracts -->
+        <xs:element name="contract_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="contract" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="contract">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="contract_no" minOccurs="0"/>
+                                <xs:element ref="contract_status" minOccurs="0"/>
+                                <xs:element ref="contract_type" minOccurs="0"/>
+                                <xs:element ref="contract_months" minOccurs="0"/>
+                                <xs:element ref="contract_start_date" minOccurs="0"/>
+                                <xs:element ref="contract_end_date" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="contract_no" type="xs:int"/>
+        <xs:element name="contract_status" type="xs:int"/>
+        <xs:element name="contract_type" type="xs:int"/>
+        <xs:element name="contract_months" type="xs:int"/>
+        <xs:element name="contract_start_date" type="xs:string"/>
+        <xs:element name="contract_end_date" type="xs:string"/>
+        <!-- Account Supplemental Fields -->
+        <xs:element name="acct_supp_field_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="acct_supp_field" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="acct_supp_field">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="field_name" minOccurs="0"/>
+                                <xs:element ref="field_value" minOccurs="0"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <!-- Event(s) that triggered this record -->
+        <xs:element name="event_data">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="event" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="event">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="event_id"/>
+                                <xs:element ref="event_label"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="event_id" type="xs:int"/>
+        <xs:element name="event_label" type="xs:string"/>
+</xs:schema>
