@@ -1,5 +1,18 @@
-extends layout
+doctype html
+html
+  head
+    title Learning WebSockets with Socket.io
+  body
+    h1 Message Board
+    ul#messages
+  script(src='/socket.io/socket.io.js')
+  script.
+    var socket = io.connect()
 
-block content
-  h1= title
-  p Welcome to #{title}
+    socket.on('acctandmasterplan', function (data) {
+      var li = document.createElement('li')
+        , text = document.createTextNode('Event: ' + data.event + ' Account: ' + data.acct_no + ' Plan Instance No: ' + data.plan_instance_no + ' Plan Instance Name: ' + data.plan_instance_name)
+
+      li.appendChild(text)
+      document.getElementById('messages').appendChild(li)
+    })
