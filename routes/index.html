@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/handlebarsjs/4.0.5/handlebars.js"></script>
+
+    <!-- TURN ON ALL TOOLTIPS --> 
+    <script type="text/javascript"> 
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <script id="event-template" type="text/x-handlebars-template">
+            <div class="col-sm-1 timestamp bg-success">
+                <div>
+                    <p class="text-center">12:33:14 pm</p>
+                    <p class="text-center">MST</p>
+                </div>
+            </div>
+            <div class="col-sm-1 type-icon bg-warning">
+                <i class="material-icons" data-toggle="tooltip" title="Accounts and Master Plan Instances">euro_symbol</i>
+            </div>
+            <div class="col-sm-8 event-info">
+                <p class="text-center event-name">{{event}}</p>
+                <span class="label label-danger">Acct: {{acct_no}}</span>
+                <span class="label label-warning">Master Plan Instance No: {{plan_instance_no}}</span>
+                <span class="label label-warning">Master Plan Instance Name: {{plan_instance_name}}</span>
+            </div>
+            <div class="col-md-2 col-sm-2 view-payload-link">
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#12345">View Payload</button>
+            <!-- Modal -->
+            <div class="modal fade" id="12345" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Raw Event Payload</h4>
+                </div>
+                <div class="modal-body">
+                    <xmp>
+{{{rawBody}}}
+                    </xmp>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+            </div>
+            </div>
+    </script>
+
+    <!-- SOCKET CONNECTION -->
+    <script>
+        var socket = io.connect();
+
+        socket.on('acctandmasterplan', function(data){
+            var source = $("#event-template").html();
+            var template = Handlebars.compile(source);
+            var html = template(data);
+
+            var newEventData = document.createElement('div');
+            newEventData.setAttribute('id', 'div_' + data.transaction_id);
+            newEventData.setAttribute('class', 'row event-summary');
+            newEventData.innerHTML = html;
+            
+            document.getElementById('event-data-list').appendChild(newEventData);
+        });
+
+    </script>
+
+    <style type="text/css">
+            .event-summary {
+                margin: 10px 0px 10px 0px;
+                border: 1px solid grey; 
+                box-shadow: 5px 5px 5px lightgray;
+            }
+            
+            .type-icon {
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:75px;   
+            }
+
+            .timestamp {
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:75px;
+                font-size: 80%;    
+            }
+
+            .view-payload-link {
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:75px;           
+            }
+
+            .event-info {
+                height: 75px;
+            }
+
+            /*
+            div {
+                 border: 1px black solid;
+            }
+                */
+
+            .event-name {
+                font-size: 150%;
+                margin: 0px;
+            }
+
+
+        </style>
+    </head>
+
+<body>
+    <div class="container-fluid">
+        <div class="page-header">
+            <h1>Aria Event Viewer</h1>
+        </div>
+        <div class="row col-xs-12" id="event-data-list">
+        </div>
+    </div>
+</body>
+
+</html>

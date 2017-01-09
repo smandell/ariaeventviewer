@@ -30,6 +30,21 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /**
+ * Setup Socket.io Server
+ */
+
+  var io = require('socket.io')(server);
+
+  //TO FIX: using a global variable now until I figure out how to do somemthing cleaner
+  socketList = [];
+
+  io.on('connection', (socket) => {
+    console.log("just recieved a new socket connection");
+    socketList.push(socket);
+  });
+
+
+/**
  * Normalize a port into a number, string, or false.
  */
 

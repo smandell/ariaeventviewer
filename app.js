@@ -47,18 +47,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 //https://www.terlici.com/2015/11/26/realtime-node-expressjs-with-websockets.html
 //http://www.programwitherik.com/socket-io-tutorial-with-node-js-and-express/
 
-//TO FIX: using a global variable now until I figure out how to do somemthing cleaner
-socketList = [];
+// //TO FIX: using a global variable now until I figure out how to do somemthing cleaner
+// socketList = [];
 
-io.on('connection', (socket) => {
-  console.log("just recieved a new socket connection");
-  socketList.push(socket);
-});
+// io.on('connection', (socket) => {
+//   console.log("just recieved a new socket connection");
+//   socketList.push(socket);
+// });
 
-var port = process.env.PORT || '3000';
-server.listen(port, function() {
-  console.log('Listening on port ' + port + '...')
-})
+// var port = process.env.PORT || '3000';
+// server.listen(port, function() {
+//   console.log('Listening on port ' + port + '...')
+// })
 
 
 app.use('/', routes);

@@ -4,6 +4,7 @@ var fs = require('fs');
 const util = require('util');
 //var xml4js = require('xml4js');
 var parseString = require('xml2js').parseString;
+var pd = require('pretty-data').pd;
 
 router.post('/acctandmasterplan', function(req, res, next) {
 
@@ -21,14 +22,17 @@ router.post('/acctandmasterplan', function(req, res, next) {
   // console.log('plan instance no:' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id);
   // console.log('plan instance name:' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name);
   // console.log('event: ' + parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label);
+  //console.log(pd.xml(req.rawBody));
+  
 
   socketList.forEach(function(socket) {
       socket.emit('acctandmasterplan', {
+        "transaction_id": parsedXML.apf2doc.request.transaction_id,
         "event": parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label,
         "acct_no": parsedXML.apf2doc.acct_data.acct_no,
         "plan_instance_no": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id,
         "plan_instance_name": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name,
-        "rawBody": req.rawBody
+        "rawBody": pd.xml(req.rawBody)
       });
 
       console.log('fired off message to socket');
@@ -39,7 +43,8 @@ router.post('/acctandmasterplan', function(req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index');
+  //res.render('index');
+  res.sendFile(__dirname + '/index.html');
 });
 
 module.exports = router;
