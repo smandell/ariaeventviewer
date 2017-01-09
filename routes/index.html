@@ -37,10 +37,10 @@
                 <span class="label label-warning">Master Plan Instance Name: {{plan_instance_name}}</span>
             </div>
             <div class="col-md-2 col-sm-2 view-payload-link">
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#12345">View Payload</button>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">View Payload</button>
             <!-- Modal -->
-            <div class="modal fade" id="12345" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
+            <div class="modal fade " id="modal_{{transaction_id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
