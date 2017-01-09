@@ -29,13 +29,11 @@ router.post('/acctandmasterplan', function(req, res, next) {
   socketJSONPayload.event = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;
   socketJSONPayload.rawBody = pd.xml(req.rawBody);
 
-  if (parsedXML.apf2doc.acct_data.acct_no != null) {
+  if (parsedXML.hasOwnProperty('acct_data')) {
     socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
   }
-  if (parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id != null) {
+  if (parsedXML.hasOwnProperty('master_plan_instance_data')) {
     socketJSONPayload.plan_instance_no = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id;
-  }
-  if (parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name != null) {
     socketJSONPayload.plan_instance_name = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;
   }
 
