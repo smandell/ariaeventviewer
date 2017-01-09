@@ -33,8 +33,12 @@
             <div class="col-sm-8 event-info">
                 <p class="text-center event-name">{{event}}</p>
                 <span class="label label-danger">Acct: {{acct_no}}</span>
-                <span class="label label-warning">Master Plan Instance No: {{plan_instance_no}}</span>
-                <span class="label label-warning">Master Plan Instance Name: {{plan_instance_name}}</span>
+                {{#if plan_instance_no}}
+                    <span class="label label-warning">Master Plan Instance No: {{plan_instance_no}}</span>
+                {{/if}}
+                {{#if plan_instance_name}}
+                    <span class="label label-warning">Master Plan Instance Name: {{plan_instance_name}}</span>
+                {{/if}}
             </div>
             <div class="col-md-2 col-sm-2 view-payload-link">
                 <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">View Payload</button>

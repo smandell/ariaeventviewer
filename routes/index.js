@@ -24,16 +24,32 @@ router.post('/acctandmasterplan', function(req, res, next) {
   // console.log('event: ' + parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label);
   //console.log(pd.xml(req.rawBody));
   
+  var socketJSONPayload = {};
+  socketJSONPayload.transaction_id = parsedXML.apf2doc.request.transaction_id;
+  socketJSONPayload.event = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;
+  socketJSONPayload.rawBody = pd.xml(req.rawBody);
+
+  if (parsedXML.apf2doc.acct_data.acct_no != null) {
+    socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
+  }
+  if (parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id != null) {
+    socketJSONPayload.plan_instance_no = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id;
+  }
+  if (parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name != null) {
+    socketJSONPayload.plan_instance_name = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;
+  }
+
 
   socketList.forEach(function(socket) {
-      socket.emit('acctandmasterplan', {
-        "transaction_id": parsedXML.apf2doc.request.transaction_id,
-        "event": parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label,
-        "acct_no": parsedXML.apf2doc.acct_data.acct_no,
-        "plan_instance_no": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id,
-        "plan_instance_name": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name,
-        "rawBody": pd.xml(req.rawBody)
-      });
+      socket.emit('acctandmasterplan', socketJSONPayload);
+        
+        // "transaction_id": parsedXML.apf2doc.request.transaction_id,
+        // "event": parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label,
+        // "acct_no": parsedXML.apf2doc.acct_data.acct_no,
+        // "plan_instance_no": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id,
+        // "plan_instance_name": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name,
+        // "rawBody": pd.xml(req.rawBody)
+
 
       console.log('fired off message to socket');
   });
