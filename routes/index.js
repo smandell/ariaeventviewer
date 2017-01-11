@@ -5,6 +5,7 @@ const util = require('util');
 //var xml4js = require('xml4js');
 var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
+var Prism = require('prismjs');
 
 router.post('/acctandmasterplan', function(req, res, next) {
 
@@ -23,20 +24,26 @@ router.post('/acctandmasterplan', function(req, res, next) {
   // console.log('plan instance name:' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name);
   // console.log('event: ' + parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label);
   //console.log(pd.xml(req.rawBody));
-  
+ 
   var socketJSONPayload = {};
   socketJSONPayload.transaction_id = parsedXML.apf2doc.request.transaction_id;
   socketJSONPayload.event = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;
-  socketJSONPayload.rawBody = pd.xml(req.rawBody);
+  var html = Prism.highlight(pd.xml(req.rawBody), Prism.languages.xml);
+  socketJSONPayload.rawBody = html;
+  socketJSONPayload.eventTime = new Date().toString();
 
-  if (parsedXML.hasOwnProperty('acct_data')) {
+  if ('acct_data' in parsedXML.apf2doc) {
     socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
   }
-  if (parsedXML.hasOwnProperty('master_plan_instance_data')) {
-    socketJSONPayload.plan_instance_no = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id;
-    socketJSONPayload.plan_instance_name = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;
-  }
 
+  // if (Object.hasOwnProperty.call(parsedXML, 'acct_data')){
+  //   socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
+  // }
+
+  // if (Object.hasOwnProperty.call(parsedXML, 'master_plan_instance_data')) {
+  //   socketJSONPayload.plan_instance_no = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id;
+  //   socketJSONPayload.plan_instance_name = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;
+  // }
 
   socketList.forEach(function(socket) {
       socket.emit('acctandmasterplan', socketJSONPayload);

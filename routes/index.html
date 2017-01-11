@@ -4,6 +4,7 @@
 <head>
     <!-- Latest compiled and minified CSS -->
     <script src='/socket.io/socket.io.js'></script>
+    <link rel="stylesheet" href="/stylesheets/prism.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
@@ -12,6 +13,12 @@
         crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/handlebarsjs/4.0.5/handlebars.js"></script>
+    
+    <!-- Highlight.js stuffs -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
 
     <!-- TURN ON ALL TOOLTIPS --> 
     <script type="text/javascript"> 
@@ -23,8 +30,7 @@
     <script id="event-template" type="text/x-handlebars-template">
             <div class="col-sm-1 timestamp bg-success">
                 <div>
-                    <p class="text-center">12:33:14 pm</p>
-                    <p class="text-center">MST</p>
+                    <p class="text-center">{{eventTime}}</p>
                 </div>
             </div>
             <div class="col-sm-1 type-icon bg-warning">
@@ -51,9 +57,16 @@
                     <h4 class="modal-title" id="myModalLabel">Raw Event Payload</h4>
                 </div>
                 <div class="modal-body">
-                    <xmp>
+ 
+                    <!--<xmp>
+{{rawBody}}
+                    </xmp>-->
+                    
+<pre>
+    <code class="">
 {{{rawBody}}}
-                    </xmp>
+    </code>
+</pre>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -79,6 +92,7 @@
             newEventData.innerHTML = html;
             
             document.getElementById('event-data-list').appendChild(newEventData);
+            hljs.initHighlighting();
         });
 
     </script>
