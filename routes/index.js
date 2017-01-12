@@ -7,7 +7,7 @@ var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
 var Prism = require('prismjs');
 
-router.post('/acctandmasterplan', function(req, res, next) {
+router.post('/', function(req, res, next) {
 
   // console.log("headers!");
   // console.log(req.headers);
@@ -47,15 +47,6 @@ router.post('/acctandmasterplan', function(req, res, next) {
 
   socketList.forEach(function(socket) {
       socket.emit('acctandmasterplan', socketJSONPayload);
-        
-        // "transaction_id": parsedXML.apf2doc.request.transaction_id,
-        // "event": parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label,
-        // "acct_no": parsedXML.apf2doc.acct_data.acct_no,
-        // "plan_instance_no": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id,
-        // "plan_instance_name": parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name,
-        // "rawBody": pd.xml(req.rawBody)
-
-
       console.log('fired off message to socket');
   });
   
