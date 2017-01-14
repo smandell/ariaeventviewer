@@ -28,26 +28,44 @@
     </script>
 
     <script id="event-template" type="text/x-handlebars-template">
-            <div class="col-sm-1 timestamp bg-success">
+            <div class="col-sm-1 timestamp">
                 <div>
                     <p class="text-center">{{eventTime}}</p>
                 </div>
             </div>
-            <div class="col-sm-1 type-icon bg-warning">
-                <i class="material-icons" data-toggle="tooltip" title="Accounts and Master Plan Instances">euro_symbol</i>
+
+            {{#if eventType.instance}}
+            <div class="col-sm-1 type-icon bg-primary">
+                <i class="material-icons" data-toggle="tooltip" title="Accounts and Master Plan Instances">account_circle</i>
             </div>
+            {{else if eventType.order}}
+            <div class="col-sm-1 type-icon bg-info">
+                <i class="material-icons" data-toggle="tooltip" title="Orders">shopping_cart</i>
+            </div>
+            {{else if eventType.financial}}
+            <div class="col-sm-1 type-icon bg-success">
+                <i class="material-icons" data-toggle="tooltip" title="Financial Transactions">euro_symbol</i>
+            </div>
+            {{else if eventType.notification}}
+            <div class="col-sm-1 type-icon bg-warning">
+                <i class="material-icons" data-toggle="tooltip" title="Account and Master Plan Notifications">notifications</i>
+            </div>        
+            {{/if}}    
+
             <div class="col-sm-8 event-info">
-                <p class="text-center event-name">{{event}}</p>
+                {{#each event}}
+                <p class="text-center event-name">{{this}}</p>
+                {{/each}}
                 <span class="label label-danger">Acct: {{acct_no}}</span>
-                {{#if plan_instance_no}}
-                    <span class="label label-warning">Master Plan Instance No: {{plan_instance_no}}</span>
-                {{/if}}
-                {{#if plan_instance_name}}
-                    <span class="label label-warning">Master Plan Instance Name: {{plan_instance_name}}</span>
+                {{#each planData}}
+                    <span class="label label-warning">Master Plan: {{this}}</span>
+                {{/each}}
+                {{#if total_amount}}
+                    <span class="label label-success">Total Amount: {{total_amount}}</span>
                 {{/if}}
             </div>
             <div class="col-md-2 col-sm-2 view-payload-link">
-                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">View Payload</button>
+                <button class="btn btn-primary pull-right" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">View Payload</button>
             <!-- Modal -->
             <div class="modal fade " id="modal_{{transaction_id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog modal-lg" role="document">
@@ -81,7 +99,9 @@
     <script>
         var socket = io.connect();
 
-        socket.on('acctandmasterplan', function(data){
+        socket.on('eventPayload', function(data){
+
+            //look at the eventType to know which template to compile 
             var source = $("#event-template").html();
             var template = Handlebars.compile(source);
             var html = template(data);
@@ -137,7 +157,7 @@
                 */
 
             .event-name {
-                font-size: 150%;
+                font-size: 125%;
                 margin: 0px;
             }
 

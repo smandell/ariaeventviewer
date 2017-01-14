@@ -7,50 +7,68 @@ var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
 var Prism = require('prismjs');
 
-router.post('/', function(req, res, next) {
+/* rename this to be what the event class is called */
+router.post('/eventendpoint', function(req, res, next) {
 
-  // console.log("headers!");
-  // console.log(req.headers);
-  
-  // console.log("jsonified xml");
-  var parsedXML = '';
-  parseString(req.rawBody, {trim: true, normalize: true, explicitArray: false}, function (err, result) {
-    parsedXML = result;
-  });
-  // console.log(util.inspect(parsedXML, false, null));
+  var parsedXML = parseXML(req);
+  var socketJSONPayload = getStandardPayloadContent(parsedXML, req);
 
-  // console.log('account number:' + parsedXML.apf2doc.acct_data.acct_no);
-  // console.log('plan instance no:' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id);
-  // console.log('plan instance name:' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name);
-  // console.log('event: ' + parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label);
-  //console.log(pd.xml(req.rawBody));
- 
-  var socketJSONPayload = {};
-  socketJSONPayload.transaction_id = parsedXML.apf2doc.request.transaction_id;
-  socketJSONPayload.event = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;
-  var html = Prism.highlight(pd.xml(req.rawBody), Prism.languages.xml);
-  socketJSONPayload.rawBody = html;
-  socketJSONPayload.eventTime = new Date().toString();
-
-  if ('acct_data' in parsedXML.apf2doc) {
-    socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
+  //Aria is not consistent with where it places the event type in the XML payload across
+  //event classes. 
+  if ('class_name' in parsedXML.apf2doc.request) {
+    socketJSONPayload.class_name = parsedXML.apf2doc.request.class_name;
+  } else if ('class' in parsedXML.apf2doc.request) {
+    socketJSONPayload.class_name = parsedXML.apf2doc.request.class;
   }
 
-  // if (Object.hasOwnProperty.call(parsedXML, 'acct_data')){
-  //   socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
-  // }
+  var eventType = {
+    instance: false,
+    order: false,
+    financial: false,
+    notification: false
+  };
 
-  // if (Object.hasOwnProperty.call(parsedXML, 'master_plan_instance_data')) {
-  //   socketJSONPayload.plan_instance_no = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.client_master_plan_instance_id;
-  //   socketJSONPayload.plan_instance_name = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;
-  // }
+  socketJSONPayload.eventType = eventType;
 
-  socketList.forEach(function(socket) {
-      socket.emit('acctandmasterplan', socketJSONPayload);
-      console.log('fired off message to socket');
-  });
-  
-  res.send("SUCCESS");
+  switch (socketJSONPayload.class_name) {
+    case "A":
+      socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
+      socketJSONPayload.eventType.instance = true;
+
+      //check if multiple plans are being passed in this single payload
+      socketJSONPayload.planData = [];
+      var masterPlanInstances = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance;
+      if (Array.isArray(masterPlanInstances)) {
+        var iterator;
+        for (iterator = 0; iterator < masterPlanInstances.length; iterator++) {
+          socketJSONPayload.planData[iterator] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].plan_name;
+        }
+      } else {
+        socketJSONPayload.planData[0] = parsedXML.apf2doc.event_data.master_plan_instance_data.master_plan_instance.master_plan_instance_no + ' ' + parsedXML.apf2doc.event_data.master_plan_instance_data.master_plan_instance.plan_name;  
+      }     
+
+      break;
+    case "O":
+      socketJSONPayload.eventType.order = true;
+      break;
+    //even though other Aria events call this event 'F', the Finanacial Transaction event calls itself 'T'
+    case "T":
+      //extract account number
+      socketJSONPayload.acct_no = parsedXML.apf2doc.account.acct_no;
+      socketJSONPayload.eventType.financial = true;
+
+      //extract invoice total amount
+      socketJSONPayload.total_amount = parsedXML.apf2doc.financial_transaction_groups.financial_transaction_group.total_amount;
+      break;
+    case "N":
+      //extract account number
+      socketJSONPayload.acct_no = parsedXML.apf2doc.account.acct_no;
+
+      socketJSONPayload.eventType.notification = true;
+      break;
+  }
+
+  send(socketJSONPayload, res);
 });
 
 /* GET home page. */
@@ -58,5 +76,51 @@ router.get('/', function(req, res, next) {
   //res.render('index');
   res.sendFile(__dirname + '/index.html');
 });
+
+function getStandardPayloadContent(parsedXML, req){
+  var socketJSONPayload = {};
+  socketJSONPayload.transaction_id = parsedXML.apf2doc.request.transaction_id;
+
+  //check if multiple events are being passed in this single payload
+  socketJSONPayload.event = [];
+  var payloadEventNameData = parsedXML.apf2doc.event_data.event;
+  if (Array.isArray(payloadEventNameData)) {
+    var iterator;
+    for (iterator = 0; iterator < payloadEventNameData.length; iterator++) {
+      socketJSONPayload.event[iterator] = parsedXML.apf2doc.event_data.event[iterator].event_id + ' ' + parsedXML.apf2doc.event_data.event[iterator].event_label;
+    }
+  } else {
+    socketJSONPayload.event[0] = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;  
+  }
+
+  var html = Prism.highlight(pd.xml(req.rawBody), Prism.languages.xml);
+  socketJSONPayload.rawBody = html;
+
+  //get current server time
+  socketJSONPayload.eventTime = new Date().toLocaleTimeString();
+  
+  return socketJSONPayload;
+};
+
+function parseXML(req){
+  var parsedXML = "";
+  
+  parseString(req.rawBody, {trim: true, normalize: true, explicitArray: false}, function (err, result) {
+    parsedXML = result;
+  });
+
+  return parsedXML;
+};
+
+/* send the JSON payload to the clients and send a response to Aria */
+function send(socketJSONPayload, res) {
+  socketList.forEach(function(socket) {
+        socket.emit('eventPayload', socketJSONPayload);
+        console.log('fired off message to socket');
+    });
+
+    res.send("SUCCESS");
+};
+
 
 module.exports = router;
