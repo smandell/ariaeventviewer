@@ -64,6 +64,10 @@ router.post('/eventendpoint', function(req, res, next) {
       //extract account number
       socketJSONPayload.acct_no = parsedXML.apf2doc.account.acct_no;
 
+      //extract message details 
+      socketJSONPayload.messageSubject = parsedXML.apf2doc.message.msg_subject;
+      socketJSONPayload.messageRecipient = parsedXML.apf2doc.message.msg_recipient_email_address;
+
       socketJSONPayload.eventType.notification = true;
       break;
   }
