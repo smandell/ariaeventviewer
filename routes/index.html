@@ -19,6 +19,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
+    <!-- load custom CSS --> 
+    <link rel="stylesheet" href="/stylesheets/style.css">
 
     <!-- TURN ON ALL TOOLTIPS --> 
     <script type="text/javascript"> 
@@ -80,12 +82,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Raw Event Payload</h4>
                 </div>
-                <div class="modal-body">
- 
-                    <!--<xmp>
-{{rawBody}}
-                    </xmp>-->
-                    
+                <div class="modal-body">                    
 <pre>
     <code class="">
 {{{rawBody}}}
@@ -100,85 +97,62 @@
             </div>
             </div>
     </script>
-
-    <!-- SOCKET CONNECTION -->
-    <script>
-        var socket = io.connect();
-
-        socket.on('eventPayload', function(data){
-
-            //look at the eventType to know which template to compile 
-            var source = $("#event-template").html();
-            var template = Handlebars.compile(source);
-            var html = template(data);
-
-            var newEventData = document.createElement('div');
-            newEventData.setAttribute('id', 'div_' + data.transaction_id);
-            newEventData.setAttribute('class', 'row event-summary');
-            newEventData.innerHTML = html;
-            
-            document.getElementById('event-data-list').appendChild(newEventData);
-            hljs.initHighlighting();
-        });
-
-    </script>
-
-    <style type="text/css">
-            .event-summary {
-                margin: 10px 0px 10px 0px;
-                border: 1px solid grey; 
-                box-shadow: 5px 5px 5px lightgray;
-            }
-            
-            .type-icon {
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                height:75px;   
-            }
-
-            .timestamp {
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                height:75px;
-                font-size: 80%;    
-            }
-
-            .view-payload-link {
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                height:75px;           
-            }
-
-            .event-info {
-                height: 75px;
-            }
-
-            /*
-            div {
-                 border: 1px black solid;
-            }
-                */
-
-            .event-name {
-                font-size: 125%;
-                margin: 0px;
-            }
-
-
-        </style>
     </head>
 
 <body>
     <div class="container-fluid">
         <div class="page-header">
-            <h1>Aria Event Viewer</h1>
+            <h1 id="page_title">Aria Event Viewer</h1>
+        </div>
+        <div class="bg-success">
+            <span style="display:none" id="client_id_message">Now listening for event from client: </span>
+        </div>
+        <div class="row col-xs-12" id="client_id_request">
+            <form class="form-inline" id="client_id_form">
+                <div class="form-group">
+                    <label for="client_id_input">Client Id:</label>
+                    <input type="number" class="form-control" id="client_id_input">
+                </div>
+                <button type="button" class="btn btn-primary" id="set_client_btn">Set Client</button>
+            </form>
         </div>
         <div class="row col-xs-12" id="event-data-list">
         </div>
     </div>
+
+
+    <!-- SOCKET CONNECTION -->
+    <script>   
+        $('#set_client_btn').click(function() {
+
+            //setup Socket.io
+            var socket = io.connect();
+
+            socket.on('eventPayload', function(data){
+
+                //look at the eventType to know which template to compile 
+                var source = $("#event-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(data);
+
+                var newEventData = document.createElement('div');
+                newEventData.setAttribute('id', 'div_' + data.transaction_id);
+                newEventData.setAttribute('class', 'row event-summary');
+                newEventData.innerHTML = html;
+                
+                document.getElementById('event-data-list').appendChild(newEventData);
+                hljs.initHighlighting();
+            });  
+
+            //emit the client_id to the server
+            var client_id = $('#client_id_input').val();
+            socket.emit('register', client_id);
+            $('#client_id_request').hide();
+            $('#client_id_message').show();
+            $('#client_id_message').append(client_id);
+        });
+
+    </script>
 </body>
 
 </html>

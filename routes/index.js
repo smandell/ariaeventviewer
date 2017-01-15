@@ -33,6 +33,7 @@ router.post('/eventendpoint', function(req, res, next) {
   switch (socketJSONPayload.class_name) {
     case "A":
       socketJSONPayload.acct_no = parsedXML.apf2doc.acct_data.acct_no;
+      socketJSONPayload.client_no = parsedXML.apf2doc.acct_data.client_no;
       socketJSONPayload.eventType.instance = true;
 
       //check if multiple plans are being passed in this single payload
@@ -55,6 +56,7 @@ router.post('/eventendpoint', function(req, res, next) {
     case "T":
       //extract account number
       socketJSONPayload.acct_no = parsedXML.apf2doc.account.acct_no;
+      socketJSONPayload.client_no = parsedXML.apf2doc.account.client_no;
       socketJSONPayload.eventType.financial = true;
 
       //extract invoice total amount
@@ -63,6 +65,7 @@ router.post('/eventendpoint', function(req, res, next) {
     case "N":
       //extract account number
       socketJSONPayload.acct_no = parsedXML.apf2doc.account.acct_no;
+      socketJSONPayload.client_no = parsedXML.apf2doc.account.client_no;
 
       //extract message details 
       socketJSONPayload.messageSubject = parsedXML.apf2doc.message.msg_subject;
@@ -118,7 +121,8 @@ function parseXML(req){
 
 /* send the JSON payload to the clients and send a response to Aria */
 function send(socketJSONPayload, res) {
-  socketList.forEach(function(socket) {
+
+  socketList[socketJSONPayload.client_no].forEach(function(socket) {
         socket.emit('eventPayload', socketJSONPayload);
         console.log('fired off message to socket');
     });

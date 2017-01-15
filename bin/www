@@ -36,12 +36,25 @@ server.on('listening', onListening);
   var io = require('socket.io')(server);
 
   //TO FIX: using a global variable now until I figure out how to do somemthing cleaner
-  socketList = [];
+  var clientSocket = 
+
+
+  socketList = {};
 
   io.on('connection', (socket) => {
+    
+    socket.on('register', (clientNumber) => {
+      //if it's the first element then create the array, otherwise add to it
+      if (socketList[clientNumber]) {
+        socketList[clientNumber].push(socket);
+      } else {
+        socketList[clientNumber] = [socket];
+      }
+    });
     console.log("just recieved a new socket connection");
-    socketList.push(socket);
+
   });
+
 
 
 /**
