@@ -36,9 +36,6 @@ server.on('listening', onListening);
   var io = require('socket.io')(server);
 
   //TO FIX: using a global variable now until I figure out how to do somemthing cleaner
-  var clientSocket = 
-
-
   socketList = {};
 
   io.on('connection', (socket) => {
