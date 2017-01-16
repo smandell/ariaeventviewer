@@ -109,6 +109,7 @@ function getStandardPayloadContent(parsedXML, req){
   return socketJSONPayload;
 };
 
+//parses out the XML from the event payload and turns it into a JSON object 
 function parseXML(req){
   var parsedXML = "";
   
