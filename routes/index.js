@@ -45,7 +45,7 @@ router.post('/eventendpoint', function(req, res, next) {
           socketJSONPayload.planData[iterator] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].plan_name;
         }
       } else {
-        socketJSONPayload.planData[0] = parsedXML.apf2doc.event_data.master_plan_instance_data.master_plan_instance.master_plan_instance_no + ' ' + parsedXML.apf2doc.event_data.master_plan_instance_data.master_plan_instance.plan_name;  
+        socketJSONPayload.planData[0] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.master_plan_instance_no + ' ' + parsedXML.apf2doc.event_data.master_plan_instance_data.master_plan_instance.plan_name;  
       }     
 
       break;
