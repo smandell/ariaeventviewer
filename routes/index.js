@@ -37,16 +37,20 @@ router.post('/eventendpoint', function(req, res, next) {
       socketJSONPayload.eventType.instance = true;
 
       //check if multiple plans are being passed in this single payload
-      socketJSONPayload.planData = [];
-      var masterPlanInstances = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance;
-      if (Array.isArray(masterPlanInstances)) {
-        var iterator;
-        for (iterator = 0; iterator < masterPlanInstances.length; iterator++) {
-          socketJSONPayload.planData[iterator] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].plan_name;
+      
+      if ('master_plan_instance_data' in parsedXML.apf2doc){
+        socketJSONPayload.planData = [];
+        var masterPlanInstances = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance;
+        if (Array.isArray(masterPlanInstances)) {
+          var iterator;
+          for (iterator = 0; iterator < masterPlanInstances.length; iterator++) {
+            socketJSONPayload.planData[iterator] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance[iterator].plan_name;
+          }
+        } else {
+          socketJSONPayload.planData[0] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;  
         }
-      } else {
-        socketJSONPayload.planData[0] = parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.master_plan_instance_no + ' ' + parsedXML.apf2doc.master_plan_instance_data.master_plan_instance.plan_name;  
-      }     
+      }
+           
 
       break;
     case "O":
