@@ -64,7 +64,10 @@ router.post('/eventendpoint', function(req, res, next) {
       socketJSONPayload.eventType.financial = true;
 
       //extract invoice total amount
-      socketJSONPayload.total_amount = parsedXML.apf2doc.financial_transaction_groups.financial_transaction_group.total_amount;
+      if ('financial_transaction_groups' in parsedXML.apf2doc) {
+        socketJSONPayload.total_amount = parsedXML.apf2doc.financial_transaction_groups.financial_transaction_group.total_amount;
+      }
+      
       break;
     case "N":
       //extract account number
