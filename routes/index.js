@@ -88,9 +88,7 @@ router.post('/eventendpoint', function(req, res, next) {
 /* GET home page. */
 router.get('/', function(req, res, next) {
   //res.render('index');
-  res.writeHead(200, {
-    'Access-Control-Allow-Origin': '*'
-  });
+  res.setHeader('Access-Control-Allow-Origin','*');
   res.sendFile(__dirname + '/index.html');
 });
 
