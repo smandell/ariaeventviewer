@@ -13,113 +13,155 @@
         crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/handlebarsjs/4.0.5/handlebars.js"></script>
-    
+
     <!-- Highlight.js stuffs -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
 
     <script>
-            (function (i, s, o, g, r, a, m) {
+        (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
                 (i[r].q = i[r].q || []).push(arguments)
             }, i[r].l = 1 * new Date(); a = s.createElement(o),
                 m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-            ga('create', 'UA-57017301-3', 'auto');
-            ga('send', 'pageview');
-
-        </script>
-
+        ga('create', 'UA-57017301-3', 'auto');
+        ga('send', 'pageview');
+    </script>
 
 
-    <!-- load custom CSS --> 
+
+    <!-- load custom CSS -->
     <link rel="stylesheet" href="/stylesheets/style.css">
 
-    <!-- TURN ON ALL TOOLTIPS --> 
-    <script type="text/javascript"> 
-        $(document).ready(function() {
-            $("body").tooltip({ selector: '[data-toggle=tooltip]' });
-        });
+    <!-- TURN ON ALL TOOLTIPS -->
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+            });
     </script>
 
     <script id="event-template" type="text/x-handlebars-template">
-            <div class="col-sm-1 timestamp">
-                <div>
-                    <p class="text-center">{{eventTime}}</p>
-                </div>
+        <div class="col-sm-1 timestamp">
+            <div>
+                <p class="text-center">{{eventTime}}</p>
             </div>
+        </div>
 
-            {{#if eventType.instance}}
-            <div class="col-sm-1 type-icon bg-primary" data-toggle="tooltip" title="Accounts and Master Plan Instances">
-                <i class="material-icons">account_circle</i>
-            </div>
-            {{else if eventType.order}}
-            <div class="col-sm-1 type-icon bg-info" data-toggle="tooltip" title="Orders">
-                <i class="material-icons" >shopping_cart</i>
-            </div>
-            {{else if eventType.financial}}
-            <div class="col-sm-1 type-icon bg-success" data-toggle="tooltip" title="Financial Transactions">
-                <i class="material-icons" >euro_symbol</i>
-            </div>
-            {{else if eventType.notification}}
-            <div class="col-sm-1 type-icon bg-warning" data-toggle="tooltip" title="Account and Master Plan Notifications">
-                <i class="material-icons">notifications</i>
-            </div>        
-            {{/if}}    
+        {{#if eventType.instance}}
+        <div class="col-sm-1 type-icon bg-primary" data-toggle="tooltip" title="Accounts and Master Plan Instances">
+            <i class="material-icons">account_circle</i>
+        </div>
+        {{else if eventType.order}}
+        <div class="col-sm-1 type-icon bg-info" data-toggle="tooltip" title="Orders">
+            <i class="material-icons">shopping_cart</i>
+        </div>
+        {{else if eventType.financial}}
+        <div class="col-sm-1 type-icon bg-success" data-toggle="tooltip" title="Financial Transactions">
+            <i class="material-icons">euro_symbol</i>
+        </div>
+        {{else if eventType.notification}}
+        <div class="col-sm-1 type-icon bg-warning" data-toggle="tooltip" title="Account and Master Plan Notifications">
+            <i class="material-icons">notifications</i>
+        </div>
+        {{/if}}
 
-            <div class="col-sm-8 event-info">
-                {{#each event}}
-                <p class="text-center event-name">{{this}}</p>
-                {{/each}}
-                <span class="label label-danger">Acct: {{acct_no}}</span>
-                {{#each planData}}
-                    <span class="label label-warning">Master Plan: {{this}}</span>
-                {{/each}}
-                {{#if total_amount}}
-                    <span class="label label-success">Total Amount: {{total_amount}}</span>
-                {{/if}}
-                {{#if messageSubject}}
-                    <span class="label label-info">Subject: {{messageSubject}}</span>
-                {{/if}}
-                {{#if messageRecipient}}
-                    <span class="label label-info">Recipient: {{messageRecipient}}</span>
-                {{/if}}
-            </div>
-            <div class="col-md-2 col-sm-2 view-payload-link">
-                <button class="btn btn-primary pull-right" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">
+        <div class="col-sm-8 event-info">
+            {{#each event}}
+            <p class="text-center event-name">{{this}}</p>
+            {{/each}}
+            <span class="label label-danger">Acct: {{acct_no}}</span> {{#each planData}}
+            <span class="label label-warning">Master Plan: {{this}}</span> {{/each}} {{#if total_amount}}
+            <span class="label label-success">Total Amount: {{total_amount}}</span> {{/if}} {{#if messageSubject}}
+            <span class="label label-info">Subject: {{messageSubject}}</span> {{/if}} {{#if messageRecipient}}
+            <span class="label label-info">Recipient: {{messageRecipient}}</span> {{/if}}
+        </div>
+        <div class="col-md-2 col-sm-2 view-payload-link">
+            <button class="btn btn-primary pull-right" type="button" data-toggle="modal" data-target="#modal_{{transaction_id}}">
                     View Payload
                 </button>
             <!-- Modal -->
             <div class="modal fade " id="modal_{{transaction_id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Raw Event Payload</h4>
-                </div>
-                <div class="modal-body">   
-<pre>
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Raw Event Payload</h4>
+                        </div>
+                        <div class="modal-body">
+                            <pre>
     <code id="raw_event_payload">
 {{{rawBody}}}
     </code>
 </pre>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-            </div>
+        </div>
     </script>
-    </head>
+</head>
 
 <body>
     <div class="container-fluid">
         <div class="page-header">
             <h1 id="page_title">Aria Event Viewer</h1>
+            <button class="btn btn-info pull-right" type="button" data-toggle="modal" data-target="#modal_instructions">
+                    Instructions
+            </button>            
+            <div class="modal fade " id="modal_instructions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Instructions</h4>
+                        </div>
+                        <div class="modal-body">
+                                <p>
+                                    In order to use the Aria Event Viewer, you'll need to follow two easy steps:
+                                </p>
+                                <ol>
+                                    <li>Setup up Aria</li>
+                                    <li>Tell the event viewer which client you want to listen for</li>
+                                </ol>
+                                <h3>Setting Up Aria</h3>
+                                <ol>
+                                    <li>In Aria open the client you wish to configure</li>
+                                    <li>Navigate to Configuration -> Notifications -> Events</li>
+                                    <li>Select the event class that you want to listen for</li>
+                                    <li>Check the boxes of the events that you want to fire</li>
+                                    <li>Click the 'Step Results' tab</li>
+                                    <li>Fill in the information as you see if in the following screenshot:</li>
+                                </ol>
+                                <img style="box-shadow: 10px 10px 5px grey;" src="images/aria_setup.png">
+                                <br>
+                                <h3>Listen For Events</h3>
+                                <ol>
+                                    <li>In the Aria Event Viewer (this page), enter the client number of the client you have just configured</li>
+                                    <li>Click 'Set Client'</li>
+                                </ol>
+                                <img style="box-shadow: 10px 10px 5px grey;" src="images/listen_for_events.png">
+                                <h3>Generate Events</h3>
+                                <ol>
+                                    <li>Perform some action in Aria that will fire an event</li>
+                                    <li>Aria may take up to 40 or more seconds for actually fire the event after your action, but you should start
+                                        to see events that you have configured to fire appearing in the UI
+                                    </li>
+                                </ol>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>            
         </div>
         <div class="bg-success">
             <span style="display:none" id="client_id_message">Now listening for event from client: </span>
@@ -139,15 +181,14 @@
 
 
     <!-- SOCKET CONNECTION -->
-    <script>   
-        $('#set_client_btn').click(function() {
+    <script>
+        $('#set_client_btn').click(function () {
 
             //setup Socket.io
             var socket = io.connect();
 
-            socket.on('eventPayload', function(data){
+            socket.on('eventPayload', function (data) {
 
-                //look at the eventType to know which template to compile 
                 var source = $("#event-template").html();
                 var template = Handlebars.compile(source);
                 var html = template(data);
@@ -156,10 +197,10 @@
                 newEventData.setAttribute('id', 'div_' + data.transaction_id);
                 newEventData.setAttribute('class', 'row event-summary');
                 newEventData.innerHTML = html;
-                
+
                 document.getElementById('event-data-list').appendChild(newEventData);
                 hljs.initHighlighting();
-            });  
+            });
 
             //emit the client_id to the server
             var client_id = $('#client_id_input').val();
@@ -168,7 +209,6 @@
             $('#client_id_message').show();
             $('#client_id_message').append(client_id);
         });
-
     </script>
 </body>
 
