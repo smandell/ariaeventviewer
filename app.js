@@ -40,7 +40,7 @@ app.use(logger('dev'));
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(express.static('/images', path.join(__dirname, 'public', 'images')));
+app.use(express.static('/images', path.join(__dirname, 'public', 'images')));
 
 
 //handle websockets 
