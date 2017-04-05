@@ -15,8 +15,8 @@ var users = require('./routes/users');
 
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 //read all of the request body and format it into utf-8. This gives us the raw xml from the request
 function anyBodyParser(req, res, next) {
@@ -40,7 +40,6 @@ app.use(logger('dev'));
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
 
 //handle websockets 
