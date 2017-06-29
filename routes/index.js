@@ -2,76 +2,19 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 const util = require('util');
-//var xml4js = require('xml4js');
 var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
 var Prism = require('prismjs');
+var handleProductEventPayload = require('../controllers/ProductNotifications').handleProductEventPayload;
+var getStandardPayloadContent = require('../controllers/Utilities').getStandardPayloadContent;
+var parseXML = require('../controllers/Utilities').parseXML;
 
+/**
+ * Handles the Producct Class event types 
+ */
 router.post('/productNotifications', (req, res, next) => {
-  
-  const socketJSONPayload = {};
 
-  const parsedXML = parseXML(req);
-  const html = Prism.highlight(pd.xml(req.rawBody), Prism.languages.xml);
-  socketJSONPayload.rawBody = html;
-
-  //get current server time
-  socketJSONPayload.eventTime = new Date().toLocaleTimeString(); 
-  
-  socketJSONPayload.eventType = {
-    product: true
-  };
-
-  socketJSONPayload.objectType = parsedXML.apf2doc.object_category;
-
-  //Action
-  switch (parsedXML.apf2doc.object_action){
-    case 'A':
-      socketJSONPayload.objectAction = "Add";
-      break;
-    case 'M':
-      socketJSONPayload.objectAction = "Modify";
-      break;
-    case 'D':
-      socketJSONPayload.objectAction = "Delete";
-      break;          
-    }
-
-    //Event Numbers
-    const payloadEventNumbers = parsedXML.apf2doc.event_data;
-
-    if (Array.isArray(payloadEventNumbers)){
-      socketJSONPayload.events = payloadEventNumbers.map(event => {
-        return event_no;
-      })
-    } else {
-      socketJSONPayload.events = [];
-      socketJSONPayload.events[0] = payloadEventNumbers.event_no;
-    }
-
-    //Product Number
-    socketJSONPayload.productNumber = parsedXML.apf2doc.object_fields.object_no;
-
-    //Product Client Defined ID
-    socketJSONPayload.productClientId = parsedXML.apf2doc.object_fields.object_client_def_id;
-
-    //Product Status
-    socketJSONPayload.productStatus = parsedXML.apf2doc.object_fields.object_status;
-
-    //Field Name/Value Pairs
-    const rawProductFieldNameValues = parsedXML.apf2doc.object_fields.product_fields;
-    const productFieldValues = [];
-
-    let iterator = 0;
-    for (iterator; iterator < rawProductFieldNameValues.field_name.length; iterator++){
-      productFieldValues.push(
-        {
-          fieldName: rawProductFieldNameValues.field_name[iterator],
-          fieldValue: rawProductFieldNameValues.value_text[iterator]
-        }
-      )
-    }
-    socketJSONPayload.fieldNameValues = productFieldValues;
+    const socketJSONPayload = handleProductEventPayload(req);
 
     send(socketJSONPayload, res);
 });
@@ -161,42 +104,6 @@ router.get('/', function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin','*');
   res.sendFile(__dirname + '/index.html');
 });
-
-function getStandardPayloadContent(parsedXML, req){
-  var socketJSONPayload = {};
-  socketJSONPayload.transaction_id = parsedXML.apf2doc.request.transaction_id;
-
-  //check if multiple events are being passed in this single payload
-  socketJSONPayload.event = [];
-  var payloadEventNameData = parsedXML.apf2doc.event_data.event;
-  if (Array.isArray(payloadEventNameData)) {
-    var iterator;
-    for (iterator = 0; iterator < payloadEventNameData.length; iterator++) {
-      socketJSONPayload.event[iterator] = parsedXML.apf2doc.event_data.event[iterator].event_id + ' ' + parsedXML.apf2doc.event_data.event[iterator].event_label;
-    }
-  } else {
-    socketJSONPayload.event[0] = parsedXML.apf2doc.event_data.event.event_id + ' ' + parsedXML.apf2doc.event_data.event.event_label;  
-  }
-
-  var html = Prism.highlight(pd.xml(req.rawBody), Prism.languages.xml);
-  socketJSONPayload.rawBody = html;
-
-  //get current server time
-  socketJSONPayload.eventTime = new Date().toLocaleTimeString();
-  
-  return socketJSONPayload;
-};
-
-//parses out the XML from the event payload and turns it into a JSON object 
-function parseXML(req){
-  var parsedXML = "";
-  
-  parseString(req.rawBody, {trim: true, normalize: true, explicitArray: false}, function (err, result) {
-    parsedXML = result;
-  });
-
-  return parsedXML;
-};
 
 /* send the JSON payload to the clients and send a response to Aria */
 function send(socketJSONPayload, res) {
