@@ -5,7 +5,8 @@ const util = require('util');
 var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
 var Prism = require('prismjs');
-var handleProductEventPayload = require('../controllers/ProductNotifications').handleProductEventPayload;
+var ProductClass = require('../controllers/ProductNotifications');
+var AccountMasterPlanClass = require('../controllers/AccountMasterPlanNotifications');
 var getStandardPayloadContent = require('../controllers/Utilities').getStandardPayloadContent;
 var parseXML = require('../controllers/Utilities').parseXML;
 
@@ -13,10 +14,13 @@ var parseXML = require('../controllers/Utilities').parseXML;
  * Handles the Producct Class event types 
  */
 router.post('/productNotifications', (req, res, next) => {
+  const socketJSONPayload = ProductClass.handleEventPayload(req);
+  send(socketJSONPayload, res);
+});
 
-    const socketJSONPayload = handleProductEventPayload(req);
-
-    send(socketJSONPayload, res);
+router.post('/accountMasterPlanInstanceNotifications', (req,res,next) => {
+  const socketJSONPayload = AccountMasterPlanClass.handleEventPayload(req);
+  send(socketJSONPayload, res);
 });
 
 

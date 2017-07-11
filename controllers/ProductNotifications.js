@@ -1,9 +1,8 @@
-var parseString = require('xml2js').parseString;
 var pd = require('pretty-data').pd;
 var Prism = require('prismjs');
 var parseXML = require('./Utilities').parseXML;
 
-exports.handleProductEventPayload = function(req){
+exports.handleEventPayload = function(req){
   
   const socketJSONPayload = {};
 
